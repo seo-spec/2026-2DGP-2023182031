@@ -9,13 +9,18 @@ character = load_image('character.png')
 
 def draw_top():
     print('TOP')
+    for x in range(50,750,5):
+        draw_character(x, 550)
     pass
+
 def draw_left():
     print('LEFT')
     pass
+
 def draw_bottom():
     print('BOTTOM')
     pass
+
 def draw_right():
     print('RIGHT')
     pass
@@ -27,13 +32,15 @@ def move_circle():
         radians = math.radians(degree)
         x=400+200*math.cos(radians)
         y=300+200*math.sin(radians)
-        clear_canvas()
-        character.draw(x,y)
-        update_canvas()
-    
-        delay(0.01)
+        draw_character(x, y)
     
     pass
+
+def draw_character(x, y):
+    clear_canvas()
+    character.draw(x,y)
+    update_canvas()
+    delay(0.01)
 
 def move_rectangle():
     print('RECTANGLE')
@@ -52,7 +59,7 @@ def move_triangle():
 
 
 while True:
-    move_circle()
+    #move_circle()
     move_rectangle()
     move_triangle()
     pass
