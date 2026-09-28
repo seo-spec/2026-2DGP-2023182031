@@ -6,6 +6,9 @@ import math
 open_canvas(800,600)
 character = load_image('character.png')
 
+Triangle_A=(100,100)
+Triangle_B=(700,100)
+Triangle_C=(400,500)
 
 def draw_top():
     print('TOP')
