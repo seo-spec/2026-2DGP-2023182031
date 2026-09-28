@@ -64,6 +64,10 @@ def draw_side1():
     print('triangle_side1')
     x0,y0=Triangle_A #시작점
     x1,y1=Triangle_B #이동 끝점
+    n=100
+    for step in range (n+1):
+        t=step/n
+     
     pass
 def draw_side2():
     print('triangle_side2')
