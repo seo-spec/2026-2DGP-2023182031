@@ -7,6 +7,18 @@ open_canvas(800,600)
 character = load_image('character.png')
 
 
+def draw_top():
+    print('TOP')
+    pass
+def draw_left():
+    print('LEFT')
+    pass
+def draw_bottom():
+    print('BOTTOM')
+    pass
+def draw_right():
+    print('RIGHT')
+    pass
 
 def move_circle():
     print('CIRCLE')
@@ -25,8 +37,14 @@ def move_circle():
 
 def move_rectangle():
     print('RECTANGLE')
-    
+    draw_top()
+    draw_left()
+    draw_bottom()
+    draw_right()
     pass
+
+
+
 
 def move_triangle():
     print('TRIANGLE')
