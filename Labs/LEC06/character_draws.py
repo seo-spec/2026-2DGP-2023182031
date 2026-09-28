@@ -75,7 +75,9 @@ def draw_side2():
     print('triangle_side2')
     x0,y0=Triangle_B #시작점
     x1,y1=Triangle_C #끝점
-
+    n=100
+    for step in range(n+1):
+        pass
     pass
 def draw_side3():
     print('triangle_side3')
