@@ -78,7 +78,8 @@ def draw_side2():
     n=100
     for step in range(n+1):
         t=step/n
-        x=x0+(x1-x0)*t    
+        x=x0+(x1-x0)*t
+        y=y0+(y1-y0)*t    
     
 def draw_side3():
     print('triangle_side3')
