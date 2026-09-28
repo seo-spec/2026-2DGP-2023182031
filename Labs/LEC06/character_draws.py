@@ -62,6 +62,8 @@ def move_rectangle():
 
 def draw_side1():
     print('triangle_side1')
+    x0,y0=Triangle_A #시작점
+    x1,y1=Triangle_B #이동 끝점
     pass
 def draw_side2():
     print('triangle_side2')
@@ -79,7 +81,7 @@ def move_triangle():
     pass
 
 while True:
-    #move_circle()
+    move_circle()
     move_rectangle()
     move_triangle()
     pass
