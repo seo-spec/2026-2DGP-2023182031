@@ -85,6 +85,7 @@ def draw_side2():
 def draw_side3():
     print('triangle_side3')
     x0,y0=Triangle_C
+    x1,y1=Triangle_A
     pass
 
 
