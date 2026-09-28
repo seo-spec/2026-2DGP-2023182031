@@ -90,6 +90,7 @@ def draw_side3():
     for step in range(n+1):
         t=step/n
         x=x0+(x1-x0)*t
+        y=y0+(y1-y0)*t
     pass
 
 
