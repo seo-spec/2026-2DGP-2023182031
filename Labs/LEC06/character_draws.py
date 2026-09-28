@@ -79,8 +79,9 @@ def draw_side2():
     for step in range(n+1):
         t=step/n
         x=x0+(x1-x0)*t
-        y=y0+(y1-y0)*t    
-    
+        y=y0+(y1-y0)*t
+        draw_character(x,y)    
+    pass
 def draw_side3():
     print('triangle_side3')
     pass
@@ -94,8 +95,8 @@ def move_triangle():
     pass
 
 while True:
-    move_circle()
-    move_rectangle()
+    #move_circle()
+    #move_rectangle()
     move_triangle()
     pass
 
