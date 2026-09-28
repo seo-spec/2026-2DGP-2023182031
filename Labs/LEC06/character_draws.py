@@ -21,6 +21,8 @@ def draw_left():
 
 def draw_bottom():
     print('BOTTOM')
+    for x in range(750,50,-5):
+        draw_character(x,50)
     pass
 
 def draw_right():
