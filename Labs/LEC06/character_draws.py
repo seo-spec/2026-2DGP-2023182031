@@ -58,10 +58,13 @@ def move_rectangle():
 
 
 def draw_side1():
+    print('triangle_side1')
     pass
 def draw_side2():
+    print('triangle_side2')
     pass
 def draw_side3():
+    print('triangle_side3')
     pass
 
 
@@ -71,6 +74,7 @@ def move_triangle():
     draw_side2()
     draw_side3()
     pass
+
 while True:
     #move_circle()
     move_rectangle()
