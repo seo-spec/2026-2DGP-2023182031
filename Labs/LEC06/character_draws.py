@@ -27,6 +27,8 @@ def draw_bottom():
 
 def draw_right():
     print('RIGHT')
+    for y in range(50,550,5):
+        draw_character(50,y)
     pass
 
 def move_circle():
