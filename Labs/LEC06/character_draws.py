@@ -16,8 +16,8 @@ def draw_top():
         draw_character(x, 550)
     pass
 
-def draw_left():
-    print('LEFT')
+def draw_right():
+    print('right')
     for y in range(550,50,-5):
         draw_character(750,y)
     pass
@@ -28,8 +28,8 @@ def draw_bottom():
         draw_character(x,50)
     pass
 
-def draw_right():
-    print('RIGHT')
+def draw_left():
+    print('left')
     for y in range(50,550,5):
         draw_character(50,y)
     pass
@@ -54,9 +54,9 @@ def draw_character(x, y):
 def move_rectangle():
     print('RECTANGLE')
     draw_top()
-    draw_left()
-    draw_bottom()
     draw_right()
+    draw_bottom()
+    draw_left()
     pass
 
 
@@ -73,6 +73,8 @@ def draw_side1():
     pass
 def draw_side2():
     print('triangle_side2')
+    x0,y0=Triangle_B #시작점
+
     pass
 def draw_side3():
     print('triangle_side3')
