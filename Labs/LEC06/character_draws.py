@@ -88,7 +88,7 @@ def draw_side3():
     x1,y1=Triangle_A
     n=100
     for step in range(n+1):
-        pass
+        t=step/n
     pass
 
 
