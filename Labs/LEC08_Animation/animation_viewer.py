@@ -36,12 +36,24 @@ animations = {
 
 
 def walk():
-	for frame_rect in animations['walk']['frames']:
-		clear_canvas()
-		grass.draw(400, 30)
-		sonic.clip_draw(*frame_rect, 400, 90, 100, 100)
-		update_canvas()
-		delay(0.1)
+	walk_frames = animations['walk']['frames']
+	for path_index in range(5):
+		if path_index % 2 == 0:
+			positions = range(0, 801, 5)
+			flip = 'h'
+		else:
+			positions = range(800, -1, -5)
+			flip = ''
+
+		for frame_index, position_x in enumerate(positions):
+			frame_rect = walk_frames[frame_index % len(walk_frames)]
+			clear_canvas()
+			grass.draw(400, 30)
+			sonic.clip_composite_draw(
+				*frame_rect, 0, flip, position_x, 90, 100, 100
+			)
+			update_canvas()
+			delay(0.1)
 
 
 def run():
