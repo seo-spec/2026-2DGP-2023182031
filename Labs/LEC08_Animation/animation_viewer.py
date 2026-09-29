@@ -58,11 +58,13 @@ def walk():
 
 def run():
 	run_frames = animations['run']['frames']
-	for frame_rect in run_frames:
+	for position_x in range(0, 801, 5):
+		frame_index = (position_x // 5) % len(run_frames)
+		frame_rect = run_frames[frame_index]
 		clear_canvas()
 		grass.draw(400, 30)
 		sonic.clip_composite_draw(
-			*frame_rect, 0, 'h', 400, 90, 100, 100
+			*frame_rect, 0, 'h', position_x, 90, 100, 100
 		)
 		update_canvas()
 		delay(0.1)
