@@ -101,7 +101,7 @@ def roll():
 def jump():
 	jump_frames = animations['jump']['frames']
 	jump_heights = [0, 20, 40, 60, 40, 20]
-	for path_index in range(2):
+	for path_index in range(5):
 		if path_index == 0:
 			positions = range(0, 801, 5)
 			flip = 'h'
