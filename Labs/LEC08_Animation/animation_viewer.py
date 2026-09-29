@@ -79,16 +79,23 @@ def run():
 
 def roll():
 	roll_frames = animations['roll']['frames']
-	for position_x in range(0, 801, 5):
-		frame_index = (position_x // 5) % len(roll_frames)
-		frame_rect = roll_frames[frame_index]
-		clear_canvas()
-		grass.draw(400, 30)
-		sonic.clip_composite_draw(
-			*frame_rect, 0, 'h', position_x, 90, 100, 100
-		)
-		update_canvas()
-		delay(0.05)
+	for path_index in range(2):
+		if path_index == 0:
+			positions = range(0, 801, 5)
+			flip = 'h'
+		else:
+			positions = range(800, -1, -5)
+			flip = ''
+
+		for frame_index, position_x in enumerate(positions):
+			frame_rect = roll_frames[frame_index % len(roll_frames)]
+			clear_canvas()
+			grass.draw(400, 30)
+			sonic.clip_composite_draw(
+				*frame_rect, 0, flip, position_x, 90, 100, 100
+			)
+			update_canvas()
+			delay(0.05)
 
 
 def jump():
