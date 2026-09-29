@@ -87,4 +87,5 @@ def jump():
 
 while True:
 	walk()
+	delay(1)
 	run()
