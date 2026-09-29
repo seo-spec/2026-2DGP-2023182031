@@ -57,7 +57,15 @@ def walk():
 
 
 def run():
-	pass
+	run_frames = animations['run']['frames']
+	for frame_rect in run_frames:
+		clear_canvas()
+		grass.draw(400, 30)
+		sonic.clip_composite_draw(
+			*frame_rect, 0, 'h', 400, 90, 100, 100
+		)
+		update_canvas()
+		delay(0.1)
 
 
 def roll():
@@ -69,4 +77,4 @@ def jump():
 
 
 while True:
-	walk()
+	run()
