@@ -103,7 +103,8 @@ def jump():
 
 
 while True:
-	# walk()
-	# delay(1)
-	# run()
+	walk()
+	delay(1)
+	run()
+	delay(1)
 	roll()
