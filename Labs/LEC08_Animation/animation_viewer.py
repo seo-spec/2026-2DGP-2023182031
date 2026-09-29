@@ -22,8 +22,8 @@ animations = {
 	'roll': {
 		'frames': [
 			(80, 174, 28, 39), (120, 174, 30, 39), (157, 174, 30, 39),
-			(193, 174, 47, 39), (240, 174, 47, 39), (287, 174, 47, 39),
-			(334, 174, 47, 39), (381, 174, 26, 39),
+			(193, 174, 36, 39), (235, 174, 31, 39), (272, 174, 34, 39),
+			(314, 174, 31, 39), (353, 174, 33, 39),
 		],
 	},
 	'jump': {
@@ -78,13 +78,14 @@ def run():
 
 
 def roll():
-	frame_rect = animations['roll']['frames'][0]
-	clear_canvas()
-	grass.draw(400, 30)
-	sonic.clip_composite_draw(
-		*frame_rect, 0, 'h', 400, 90, 100, 100
-	)
-	update_canvas()
+	for frame_rect in animations['roll']['frames']:
+		clear_canvas()
+		grass.draw(400, 30)
+		sonic.clip_composite_draw(
+			*frame_rect, 0, 'h', 400, 90, 100, 100
+		)
+		update_canvas()
+		delay(0.05)
 
 
 def jump():
