@@ -122,9 +122,10 @@ def jump():
 
 
 while True:
-	# walk()
-	# delay(1)
-	# run()
-	# delay(1)
-	# roll()
+	walk()
+	delay(1)
+	run()
+	delay(1)
+	roll()
+	delay(1)
 	jump()
