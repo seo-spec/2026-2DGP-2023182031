@@ -79,7 +79,7 @@ def run():
 
 def roll():
 	roll_frames = animations['roll']['frames']
-	for path_index in range(2):
+	for path_index in range(5):
 		if path_index == 0:
 			positions = range(0, 801, 5)
 			flip = 'h'
