@@ -100,13 +100,15 @@ def roll():
 
 def jump():
 	jump_frames = animations['jump']['frames']
+	jump_heights = [0, 20, 40, 60, 40, 20]
 	for position_x in range(0, 801, 5):
 		frame_index = (position_x // 5) % len(jump_frames)
 		frame_rect = jump_frames[frame_index]
+		position_y = 90 + jump_heights[frame_index]
 		clear_canvas()
 		grass.draw(400, 30)
 		sonic.clip_composite_draw(
-			*frame_rect, 0, 'h', position_x, 90, 100, 100
+			*frame_rect, 0, 'h', position_x, position_y, 100, 100
 		)
 		update_canvas()
 		delay(0.05)
