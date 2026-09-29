@@ -99,12 +99,19 @@ def roll():
 
 
 def jump():
-	pass
+	frame_rect = animations['jump']['frames'][0]
+	clear_canvas()
+	grass.draw(400, 30)
+	sonic.clip_composite_draw(
+		*frame_rect, 0, 'h', 400, 90, 100, 100
+	)
+	update_canvas()
 
 
 while True:
-	walk()
-	delay(1)
-	run()
-	delay(1)
-	roll()
+	# walk()
+	# delay(1)
+	# run()
+	# delay(1)
+	# roll()
+	jump()
