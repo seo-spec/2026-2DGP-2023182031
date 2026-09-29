@@ -78,11 +78,14 @@ def run():
 
 
 def roll():
-	for frame_rect in animations['roll']['frames']:
+	roll_frames = animations['roll']['frames']
+	for position_x in range(0, 801, 5):
+		frame_index = (position_x // 5) % len(roll_frames)
+		frame_rect = roll_frames[frame_index]
 		clear_canvas()
 		grass.draw(400, 30)
 		sonic.clip_composite_draw(
-			*frame_rect, 0, 'h', 400, 90, 100, 100
+			*frame_rect, 0, 'h', position_x, 90, 100, 100
 		)
 		update_canvas()
 		delay(0.05)
