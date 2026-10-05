@@ -22,6 +22,7 @@ ANIMATION_ORDER = (
     'fast_run', 'dash', 'turn', 'hurt', 'balance', 'death', 'stand',
 )
 ANIMATIONS = {
+    'look_up': ((212, 448, 28, 38), (240, 448, 29, 38)),
     'idle': (
         (1, 447, 29, 39), (31, 447, 26, 38), (58, 447, 30, 39),
         (88, 447, 28, 38), (118, 447, 30, 38), (150, 447, 30, 38),
@@ -35,6 +36,7 @@ class Playback:
     """렌더링과 독립적으로 경과 시간에 따라 프레임을 전환한다."""
 
     frame_index: int = 0
+    animation_index: int = 0
     completed_loops: int = 0
     waiting: bool = False
     elapsed: float = 0.0
@@ -45,6 +47,7 @@ class Playback:
             if self.elapsed >= PAUSE_DURATION:
                 self.elapsed -= PAUSE_DURATION
                 self.waiting = False
+                self.animation_index = min(self.animation_index + 1, len(ANIMATIONS) - 1)
                 self.completed_loops = 0
                 self.frame_index = 0
             return
@@ -52,17 +55,25 @@ class Playback:
         while self.elapsed >= FRAME_INTERVAL:
             self.elapsed -= FRAME_INTERVAL
             self.frame_index += 1
-            if self.frame_index == len(ANIMATIONS['idle']):
+            if self.frame_index == len(self.frames):
                 self.frame_index = 0
                 self.completed_loops += 1
                 if self.completed_loops == REPEAT_COUNT:
-                    self.frame_index = len(ANIMATIONS['idle']) - 1
+                    self.frame_index = len(self.frames) - 1
                     self.waiting = True
                     break
 
     @property
+    def name(self):
+        return tuple(name for name in ANIMATION_ORDER if name in ANIMATIONS)[self.animation_index]
+
+    @property
+    def frames(self):
+        return ANIMATIONS[self.name]
+
+    @property
     def frame(self):
-        return ANIMATIONS['idle'][self.frame_index]
+        return self.frames[self.frame_index]
 
 
 def draw_frame(sprite, frame):
