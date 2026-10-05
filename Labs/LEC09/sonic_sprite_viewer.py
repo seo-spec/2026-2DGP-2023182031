@@ -5,7 +5,7 @@ from pathlib import Path
 import sys
 from dataclasses import dataclass
 from time import perf_counter
-from math import isfinite
+from math import isfinite, pi, sin
 
 CANVAS_WIDTH = 800
 CANVAS_HEIGHT = 600
@@ -16,6 +16,18 @@ FRAME_INTERVAL = 0.1
 LOOP_DELAY = 0.005
 REPEAT_COUNT = 5
 PAUSE_DURATION = 1.0
+SCREEN_MARGIN = 24
+SPIN_JUMP_HEIGHT = 100
+# 초당 픽셀 수. 음수는 오른쪽 경계에서 왼쪽으로 출발하는 뒤로 밀림이다.
+MOVEMENT_SPEEDS = {
+    'walk': 120,
+    'run': 200,
+    'spin': 180,
+    'spin_ball': 240,
+    'fast_run': 320,
+    'dash': 400,
+    'hurt': -160,
+}
 SPRITE_PATH = Path(__file__).resolve().with_name('sonic-sprite.png')
 
 # 실제 시트의 위에서 아래, 왼쪽에서 오른쪽 순서. 제목/저작자 표기는 제외한다.
@@ -170,12 +182,54 @@ class Playback:
     def frame(self):
         return self.frames[self.frame_index]
 
+    @property
+    def action_time(self):
+        """대기 중에는 5회 재생 완료 시점의 위치를 유지한다."""
+        duration = len(self.frames) * FRAME_INTERVAL * REPEAT_COUNT
+        if self.waiting:
+            return duration
+        frame_count = self.completed_loops * len(self.frames) + self.frame_index
+        return min(duration, frame_count * FRAME_INTERVAL + self.elapsed)
 
-def draw_frame(sprite, frame):
+    @property
+    def pose(self):
+        """프레임 크기를 고려한 왕복 위치, 발밑 높이, 좌우 반전을 반환한다."""
+        speed = MOVEMENT_SPEEDS.get(self.name, 0)
+        if not speed:
+            return ANCHOR_X, BASELINE_Y, ''
+
+        half_width = max(frame[2] for frame in self.frames) * SPRITE_SCALE / 2
+        left = SCREEN_MARGIN + half_width
+        right = CANVAS_WIDTH - SCREEN_MARGIN - half_width
+        span = right - left
+        if span <= 0:
+            return ANCHOR_X, BASELINE_Y, ''
+
+        # 삼각파 경로는 경계에서 반사하며, 긴 경과 시간도 화면 밖으로 나가지 않는다.
+        start = span if speed < 0 else 0
+        travel = (start + abs(speed) * self.action_time) % (2 * span)
+        moving_right = travel < span
+        x = left + (travel if moving_right else 2 * span - travel)
+        flip = '' if moving_right else 'h'
+        if self.name == 'hurt':
+            flip = 'h' if moving_right else ''
+
+        y = BASELINE_Y
+        if self.name == 'spin' and not self.waiting:
+            loop_duration = len(self.frames) * FRAME_INTERVAL
+            progress = (self.action_time % loop_duration) / loop_duration
+            max_height = max(frame[3] for frame in self.frames) * SPRITE_SCALE
+            jump_height = max(0, min(SPIN_JUMP_HEIGHT,
+                                     CANVAS_HEIGHT - SCREEN_MARGIN - BASELINE_Y - max_height))
+            y += jump_height * sin(pi * progress)
+        return x, y, flip
+
+
+def draw_frame(sprite, frame, x=ANCHOR_X, y=BASELINE_Y, flip=''):
     """pico2d의 왼쪽 아래 기준 좌표로 프레임을 자른다."""
     width, height = frame[2:]
-    sprite.clip_draw(*frame, ANCHOR_X, BASELINE_Y + height * SPRITE_SCALE / 2,
-                     width * SPRITE_SCALE, height * SPRITE_SCALE)
+    sprite.clip_composite_draw(*frame, 0, flip, x, y + height * SPRITE_SCALE / 2,
+                               width * SPRITE_SCALE, height * SPRITE_SCALE)
 
 
 def handle_events():
@@ -226,7 +280,7 @@ def main():
             playback.update(now - previous_time)
             previous_time = now
             pico2d.clear_canvas()
-            draw_frame(sprite, playback.frame)
+            draw_frame(sprite, playback.frame, *playback.pose)
             pico2d.update_canvas()
             pico2d.delay(LOOP_DELAY)
     finally:
