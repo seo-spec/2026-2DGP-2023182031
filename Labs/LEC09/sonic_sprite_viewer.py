@@ -8,6 +8,13 @@ CANVAS_WIDTH = 1200
 CANVAS_HEIGHT = 800
 SPRITE_PATH = Path(__file__).resolve().with_name('sonic-sprite.png')
 
+# 실제 시트의 위에서 아래, 왼쪽에서 오른쪽 순서. 제목/저작자 표기는 제외한다.
+ANIMATION_ORDER = (
+    'idle', 'look_up', 'crouch', 'walk', 'run', 'spin', 'spin_ball',
+    'fast_run', 'dash', 'turn', 'hurt', 'balance', 'death', 'stand',
+)
+ANIMATIONS = {}
+
 
 def handle_events():
     """창 닫기와 Escape 입력을 처리한다."""
