@@ -7,8 +7,8 @@ from dataclasses import dataclass
 from time import perf_counter
 from math import isfinite
 
-CANVAS_WIDTH = 1200
-CANVAS_HEIGHT = 800
+CANVAS_WIDTH = 800
+CANVAS_HEIGHT = 600
 SPRITE_SCALE = 8
 ANCHOR_X = CANVAS_WIDTH // 2
 BASELINE_Y = 220
