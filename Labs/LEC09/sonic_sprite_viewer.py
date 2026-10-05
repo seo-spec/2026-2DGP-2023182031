@@ -33,13 +33,17 @@ class Playback:
     """렌더링과 독립적으로 경과 시간에 따라 프레임을 전환한다."""
 
     frame_index: int = 0
+    completed_loops: int = 0
     elapsed: float = 0.0
 
     def update(self, dt):
         self.elapsed += dt
         while self.elapsed >= FRAME_INTERVAL:
             self.elapsed -= FRAME_INTERVAL
-            self.frame_index = (self.frame_index + 1) % len(ANIMATIONS['idle'])
+            self.frame_index += 1
+            if self.frame_index == len(ANIMATIONS['idle']):
+                self.frame_index = 0
+                self.completed_loops += 1
 
     @property
     def frame(self):
