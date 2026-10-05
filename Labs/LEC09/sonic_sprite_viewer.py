@@ -6,6 +6,7 @@ import sys
 
 CANVAS_WIDTH = 1200
 CANVAS_HEIGHT = 800
+SPRITE_SCALE = 8
 SPRITE_PATH = Path(__file__).resolve().with_name('sonic-sprite.png')
 
 # 실제 시트의 위에서 아래, 왼쪽에서 오른쪽 순서. 제목/저작자 표기는 제외한다.
@@ -18,7 +19,9 @@ ANIMATIONS = {'idle': ((1, 447, 29, 38),)}
 
 def draw_frame(sprite, frame):
     """pico2d의 왼쪽 아래 기준 좌표로 프레임을 자른다."""
-    sprite.clip_draw(*frame, CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
+    width, height = frame[2:]
+    sprite.clip_draw(*frame, CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2,
+                     width * SPRITE_SCALE, height * SPRITE_SCALE)
 
 
 def handle_events():
