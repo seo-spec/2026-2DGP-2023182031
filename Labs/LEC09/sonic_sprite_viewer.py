@@ -184,6 +184,19 @@ def handle_events():
     return True
 
 
+def validate_animations(sprite):
+    """동작 누락과 이미지 경계를 벗어난 프레임을 시작 시 검사한다."""
+    if set(ANIMATION_ORDER) != set(ANIMATIONS):
+        raise ValueError('재생 순서와 애니메이션 정의가 일치하지 않습니다.')
+    for name in ANIMATION_ORDER:
+        if not ANIMATIONS[name]:
+            raise ValueError(f'프레임이 없는 동작: {name}')
+        for x, y, width, height in ANIMATIONS[name]:
+            if (min(x, y) < 0 or min(width, height) <= 0
+                    or x + width > sprite.w or y + height > sprite.h):
+                raise ValueError(f'이미지 범위를 벗어난 프레임: {name}')
+
+
 def load_sprite():
     """이미지가 없거나 손상된 경우 명확한 오류를 제공한다."""
     if not SPRITE_PATH.is_file():
@@ -199,6 +212,7 @@ def main():
     pico2d.open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
     try:
         sprite = load_sprite()
+        validate_animations(sprite)
         playback = Playback()
         previous_time = perf_counter()
         while handle_events():
