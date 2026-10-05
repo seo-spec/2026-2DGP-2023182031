@@ -13,7 +13,12 @@ ANIMATION_ORDER = (
     'idle', 'look_up', 'crouch', 'walk', 'run', 'spin', 'spin_ball',
     'fast_run', 'dash', 'turn', 'hurt', 'balance', 'death', 'stand',
 )
-ANIMATIONS = {}
+ANIMATIONS = {'idle': ((1, 447, 29, 38),)}
+
+
+def draw_frame(sprite, frame):
+    """pico2d의 왼쪽 아래 기준 좌표로 프레임을 자른다."""
+    sprite.clip_draw(*frame, CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
 
 
 def handle_events():
@@ -43,7 +48,7 @@ def main():
         sprite = load_sprite()
         while handle_events():
             pico2d.clear_canvas()
-            sprite.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
+            draw_frame(sprite, ANIMATIONS['idle'][0])
             pico2d.update_canvas()
             pico2d.delay(0.01)
     finally:
