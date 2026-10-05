@@ -3,12 +3,15 @@
 import pico2d
 from pathlib import Path
 import sys
+from dataclasses import dataclass
+from time import perf_counter
 
 CANVAS_WIDTH = 1200
 CANVAS_HEIGHT = 800
 SPRITE_SCALE = 8
 ANCHOR_X = CANVAS_WIDTH // 2
 BASELINE_Y = 220
+FRAME_INTERVAL = 0.1
 SPRITE_PATH = Path(__file__).resolve().with_name('sonic-sprite.png')
 
 # 실제 시트의 위에서 아래, 왼쪽에서 오른쪽 순서. 제목/저작자 표기는 제외한다.
@@ -23,6 +26,24 @@ ANIMATIONS = {
         (182, 447, 30, 38),
     ),
 }
+
+
+@dataclass
+class Playback:
+    """렌더링과 독립적으로 경과 시간에 따라 프레임을 전환한다."""
+
+    frame_index: int = 0
+    elapsed: float = 0.0
+
+    def update(self, dt):
+        self.elapsed += dt
+        while self.elapsed >= FRAME_INTERVAL:
+            self.elapsed -= FRAME_INTERVAL
+            self.frame_index = (self.frame_index + 1) % len(ANIMATIONS['idle'])
+
+    @property
+    def frame(self):
+        return ANIMATIONS['idle'][self.frame_index]
 
 
 def draw_frame(sprite, frame):
@@ -57,9 +78,14 @@ def main():
     pico2d.open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
     try:
         sprite = load_sprite()
+        playback = Playback()
+        previous_time = perf_counter()
         while handle_events():
+            now = perf_counter()
+            playback.update(now - previous_time)
+            previous_time = now
             pico2d.clear_canvas()
-            draw_frame(sprite, ANIMATIONS['idle'][0])
+            draw_frame(sprite, playback.frame)
             pico2d.update_canvas()
             pico2d.delay(0.01)
     finally:
