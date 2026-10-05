@@ -138,7 +138,7 @@ class Playback:
             if self.elapsed >= PAUSE_DURATION:
                 self.elapsed -= PAUSE_DURATION
                 self.waiting = False
-                self.animation_index = min(self.animation_index + 1, len(ANIMATIONS) - 1)
+                self.animation_index = (self.animation_index + 1) % len(ANIMATION_ORDER)
                 self.completed_loops = 0
                 self.frame_index = 0
             return
@@ -156,7 +156,7 @@ class Playback:
 
     @property
     def name(self):
-        return tuple(name for name in ANIMATION_ORDER if name in ANIMATIONS)[self.animation_index]
+        return ANIMATION_ORDER[self.animation_index]
 
     @property
     def frames(self):
