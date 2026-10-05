@@ -16,7 +16,13 @@ ANIMATION_ORDER = (
     'idle', 'look_up', 'crouch', 'walk', 'run', 'spin', 'spin_ball',
     'fast_run', 'dash', 'turn', 'hurt', 'balance', 'death', 'stand',
 )
-ANIMATIONS = {'idle': ((1, 447, 29, 38),)}
+ANIMATIONS = {
+    'idle': (
+        (1, 447, 29, 39), (31, 447, 26, 38), (58, 447, 30, 39),
+        (88, 447, 28, 38), (118, 447, 30, 38), (150, 447, 30, 38),
+        (182, 447, 30, 38),
+    ),
+}
 
 
 def draw_frame(sprite, frame):
