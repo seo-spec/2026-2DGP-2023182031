@@ -13,6 +13,7 @@ ANCHOR_X = CANVAS_WIDTH // 2
 BASELINE_Y = 220
 FRAME_INTERVAL = 0.1
 REPEAT_COUNT = 5
+PAUSE_DURATION = 1.0
 SPRITE_PATH = Path(__file__).resolve().with_name('sonic-sprite.png')
 
 # 실제 시트의 위에서 아래, 왼쪽에서 오른쪽 순서. 제목/저작자 표기는 제외한다.
@@ -35,10 +36,17 @@ class Playback:
 
     frame_index: int = 0
     completed_loops: int = 0
+    waiting: bool = False
     elapsed: float = 0.0
 
     def update(self, dt):
-        if self.completed_loops >= REPEAT_COUNT:
+        if self.waiting:
+            self.elapsed += dt
+            if self.elapsed >= PAUSE_DURATION:
+                self.elapsed -= PAUSE_DURATION
+                self.waiting = False
+                self.completed_loops = 0
+                self.frame_index = 0
             return
         self.elapsed += dt
         while self.elapsed >= FRAME_INTERVAL:
@@ -49,6 +57,7 @@ class Playback:
                 self.completed_loops += 1
                 if self.completed_loops == REPEAT_COUNT:
                     self.frame_index = len(ANIMATIONS['idle']) - 1
+                    self.waiting = True
                     break
 
     @property
