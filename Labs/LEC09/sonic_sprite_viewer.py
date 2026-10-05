@@ -5,6 +5,7 @@ from pathlib import Path
 import sys
 from dataclasses import dataclass
 from time import perf_counter
+from math import isfinite
 
 CANVAS_WIDTH = 1200
 CANVAS_HEIGHT = 800
@@ -133,18 +134,21 @@ class Playback:
     elapsed: float = 0.0
 
     def update(self, dt):
-        if self.waiting:
-            self.elapsed += dt
-            if self.elapsed >= PAUSE_DURATION:
-                self.elapsed -= PAUSE_DURATION
+        """큰 시간 간격도 순차 처리하고 소수점 경계 오차를 방지한다."""
+        if not isfinite(dt) or dt < 0:
+            raise ValueError('경과 시간은 유한한 0 이상의 값이어야 합니다.')
+        self.elapsed += dt
+        while True:
+            interval = PAUSE_DURATION if self.waiting else FRAME_INTERVAL
+            if self.elapsed + 1e-9 < interval:
+                break
+            self.elapsed = max(0.0, self.elapsed - interval)
+            if self.waiting:
                 self.waiting = False
                 self.animation_index = (self.animation_index + 1) % len(ANIMATION_ORDER)
                 self.completed_loops = 0
                 self.frame_index = 0
-            return
-        self.elapsed += dt
-        while self.elapsed >= FRAME_INTERVAL:
-            self.elapsed -= FRAME_INTERVAL
+                continue
             self.frame_index += 1
             if self.frame_index == len(self.frames):
                 self.frame_index = 0
@@ -152,7 +156,6 @@ class Playback:
                 if self.completed_loops == REPEAT_COUNT:
                     self.frame_index = len(self.frames) - 1
                     self.waiting = True
-                    break
 
     @property
     def name(self):
