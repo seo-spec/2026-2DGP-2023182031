@@ -13,6 +13,7 @@ SPRITE_SCALE = 8
 ANCHOR_X = CANVAS_WIDTH // 2
 BASELINE_Y = 220
 FRAME_INTERVAL = 0.1
+LOOP_DELAY = 0.005
 REPEAT_COUNT = 5
 PAUSE_DURATION = 1.0
 SPRITE_PATH = Path(__file__).resolve().with_name('sonic-sprite.png')
@@ -212,6 +213,8 @@ def load_sprite():
 
 def main():
     """단일 파일 실행 진입점."""
+    # 확대된 픽셀 경계를 보존한다. 한 프레임은 0.1초(초당 10프레임) 표시한다.
+    pico2d.SDL_SetHint(b'SDL_RENDER_SCALE_QUALITY', b'0')
     pico2d.open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
     try:
         sprite = load_sprite()
@@ -225,7 +228,7 @@ def main():
             pico2d.clear_canvas()
             draw_frame(sprite, playback.frame)
             pico2d.update_canvas()
-            pico2d.delay(0.01)
+            pico2d.delay(LOOP_DELAY)
     finally:
         pico2d.close_canvas()
     return 0
