@@ -40,6 +40,7 @@ class Character:
         return ANIMATIONS[(self.state, self.facing)]
 
     def update(self, dt, pressed_keys):
+        previous_x, previous_y = self.x, self.y
         horizontal = int(pico2d.SDLK_RIGHT in pressed_keys) - int(pico2d.SDLK_LEFT in pressed_keys)
         # 좌우 입력이 없거나 상쇄되면 세로 이동·정지에서도 마지막 방향을 유지한다.
         if horizontal < 0:
@@ -56,7 +57,8 @@ class Character:
         half_width, half_height = display_half_size()
         self.x = max(half_width, min(CANVAS_WIDTH - half_width, self.x))
         self.y = max(half_height, min(CANVAS_HEIGHT - half_height, self.y))
-        self.state = 'move' if length else 'idle'
+        moved = abs(self.x - previous_x) > 1e-9 or abs(self.y - previous_y) > 1e-9
+        self.state = 'move' if moved else 'idle'
         self.frame_elapsed += dt
         while self.frame_elapsed >= FRAME_INTERVAL:
             self.frame_elapsed -= FRAME_INTERVAL
