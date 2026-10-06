@@ -2,6 +2,7 @@
 
 import pico2d
 from pathlib import Path
+import sys
 
 CANVAS_WIDTH = 800
 CANVAS_HEIGHT = 600
@@ -19,11 +20,21 @@ def handle_events():
     return True
 
 
+def load_asset(path):
+    if not path.is_file():
+        raise FileNotFoundError(f'이미지 파일을 찾을 수 없습니다: {path}')
+    try:
+        return pico2d.load_image(str(path))
+    except Exception as error:
+        raise RuntimeError(f'이미지 로딩 실패: {path} ({error})') from error
+
+
 def main():
     """프로그램 실행 진입점."""
     pico2d.open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
     try:
-        background = pico2d.load_image(str(BACKGROUND_PATH))
+        background = load_asset(BACKGROUND_PATH)
+        sprite = load_asset(SPRITE_PATH)
         while handle_events():
             pico2d.clear_canvas()
             background.draw(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2,
@@ -32,7 +43,12 @@ def main():
             pico2d.delay(0.005)
     finally:
         pico2d.close_canvas()
+    return 0
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        sys.exit(main())
+    except Exception as error:
+        print(f'입력 뷰어 실행 실패: {error}', file=sys.stderr)
+        sys.exit(1)
