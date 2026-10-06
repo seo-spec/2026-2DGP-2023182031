@@ -53,12 +53,18 @@ def draw_character(sprite, frame, x, y):
     sprite.clip_draw(*frame, x, y, frame[2] * scale, frame[3] * scale)
 
 
-def handle_events():
+def handle_events(pressed_keys):
+    direction_keys = {pico2d.SDLK_LEFT, pico2d.SDLK_RIGHT,
+                      pico2d.SDLK_UP, pico2d.SDLK_DOWN}
     for event in pico2d.get_events():
         if event.type == pico2d.SDL_QUIT:
             return False
         if event.type == pico2d.SDL_KEYDOWN and event.key == pico2d.SDLK_ESCAPE:
             return False
+        if event.type == pico2d.SDL_KEYDOWN and event.key in direction_keys:
+            pressed_keys.add(event.key)
+        elif event.type == pico2d.SDL_KEYUP:
+            pressed_keys.discard(event.key)
     return True
 
 
@@ -78,8 +84,9 @@ def main():
         background = load_asset(BACKGROUND_PATH)
         sprite = load_asset(SPRITE_PATH)
         character = Character()
+        pressed_keys = set()
         previous_time = perf_counter()
-        while handle_events():
+        while handle_events(pressed_keys):
             now = perf_counter()
             character.update(now - previous_time)
             previous_time = now
