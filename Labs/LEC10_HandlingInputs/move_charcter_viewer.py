@@ -41,7 +41,11 @@ class Character:
 
     def update(self, dt, pressed_keys):
         horizontal = int(pico2d.SDLK_RIGHT in pressed_keys) - int(pico2d.SDLK_LEFT in pressed_keys)
-        self.facing = 'left' if horizontal < 0 else 'right'
+        # 좌우 입력이 없거나 상쇄되면 세로 이동·정지에서도 마지막 방향을 유지한다.
+        if horizontal < 0:
+            self.facing = 'left'
+        elif horizontal > 0:
+            self.facing = 'right'
         vertical = int(pico2d.SDLK_UP in pressed_keys) - int(pico2d.SDLK_DOWN in pressed_keys)
         length = hypot(horizontal, vertical)
         if length:
