@@ -5,6 +5,7 @@ from pathlib import Path
 import sys
 from dataclasses import dataclass
 from time import perf_counter
+from math import hypot
 
 CANVAS_WIDTH = 800
 CANVAS_HEIGHT = 600
@@ -39,6 +40,10 @@ class Character:
     def update(self, dt, pressed_keys):
         horizontal = int(pico2d.SDLK_RIGHT in pressed_keys) - int(pico2d.SDLK_LEFT in pressed_keys)
         vertical = int(pico2d.SDLK_UP in pressed_keys) - int(pico2d.SDLK_DOWN in pressed_keys)
+        length = hypot(horizontal, vertical)
+        if length:
+            horizontal /= length
+            vertical /= length
         self.x += horizontal * MOVE_SPEED * dt
         self.y += vertical * MOVE_SPEED * dt
         self.frame_elapsed += dt
