@@ -31,15 +31,17 @@ class Character:
     x: float = CANVAS_WIDTH / 2
     y: float = CANVAS_HEIGHT / 2
     state: str = 'idle'
+    facing: str = 'right'
     frame_index: int = 0
     frame_elapsed: float = 0.0
 
     @property
     def frames(self):
-        return ANIMATIONS[(self.state, 'right')]
+        return ANIMATIONS[(self.state, self.facing)]
 
     def update(self, dt, pressed_keys):
         horizontal = int(pico2d.SDLK_RIGHT in pressed_keys) - int(pico2d.SDLK_LEFT in pressed_keys)
+        self.facing = 'left' if horizontal < 0 else 'right'
         vertical = int(pico2d.SDLK_UP in pressed_keys) - int(pico2d.SDLK_DOWN in pressed_keys)
         length = hypot(horizontal, vertical)
         if length:
