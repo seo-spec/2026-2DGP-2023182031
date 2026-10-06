@@ -10,6 +10,15 @@ ASSET_DIR = Path(__file__).resolve().parent
 BACKGROUND_PATH = ASSET_DIR / 'TUK_GROUND.png'
 SPRITE_PATH = ASSET_DIR / 'animation_sheet.png'
 
+# 실제 시트: 위에서부터 오른쪽 대기, 왼쪽 대기, 오른쪽 이동, 왼쪽 이동.
+# 각 줄은 100×100 셀 8개이며 좌표는 pico2d의 왼쪽 아래 기준이다.
+ANIMATIONS = {
+    ('idle', 'right'): tuple((i * 100, 300, 100, 100) for i in range(8)),
+    ('idle', 'left'): tuple((i * 100, 200, 100, 100) for i in range(8)),
+    ('move', 'right'): tuple((i * 100, 100, 100, 100) for i in range(8)),
+    ('move', 'left'): tuple((i * 100, 0, 100, 100) for i in range(8)),
+}
+
 
 def handle_events():
     for event in pico2d.get_events():
