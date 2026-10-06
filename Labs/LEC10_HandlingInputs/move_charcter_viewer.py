@@ -10,6 +10,7 @@ CANVAS_WIDTH = 800
 CANVAS_HEIGHT = 600
 SPRITE_SCALE = 1.5
 FRAME_INTERVAL = 0.1
+MOVE_SPEED = 200.0
 ASSET_DIR = Path(__file__).resolve().parent
 BACKGROUND_PATH = ASSET_DIR / 'TUK_GROUND.png'
 SPRITE_PATH = ASSET_DIR / 'animation_sheet.png'
@@ -35,7 +36,9 @@ class Character:
     def frames(self):
         return ANIMATIONS[('idle', 'right')]
 
-    def update(self, dt):
+    def update(self, dt, pressed_keys):
+        horizontal = int(pico2d.SDLK_RIGHT in pressed_keys) - int(pico2d.SDLK_LEFT in pressed_keys)
+        self.x += horizontal * MOVE_SPEED * dt
         self.frame_elapsed += dt
         while self.frame_elapsed >= FRAME_INTERVAL:
             self.frame_elapsed -= FRAME_INTERVAL
@@ -88,7 +91,7 @@ def main():
         previous_time = perf_counter()
         while handle_events(pressed_keys):
             now = perf_counter()
-            character.update(now - previous_time)
+            character.update(now - previous_time, pressed_keys)
             previous_time = now
             pico2d.clear_canvas()
             background.draw(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2,
