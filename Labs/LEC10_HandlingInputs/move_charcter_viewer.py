@@ -23,8 +23,11 @@ def main():
     """프로그램 실행 진입점."""
     pico2d.open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
     try:
+        background = pico2d.load_image(str(BACKGROUND_PATH))
         while handle_events():
             pico2d.clear_canvas()
+            background.draw(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2,
+                            CANVAS_WIDTH, CANVAS_HEIGHT)
             pico2d.update_canvas()
             pico2d.delay(0.005)
     finally:
