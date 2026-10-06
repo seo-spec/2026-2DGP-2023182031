@@ -5,13 +5,15 @@ from pathlib import Path
 import sys
 from dataclasses import dataclass
 from time import perf_counter
-from math import hypot
+from math import hypot, isfinite
+from ctypes import byref
 
 CANVAS_WIDTH = 800
 CANVAS_HEIGHT = 600
 SPRITE_SCALE = 1.5
 FRAME_INTERVAL = 0.1
 MOVE_SPEED = 200.0
+LOOP_DELAY = 0.005
 ASSET_DIR = Path(__file__).resolve().parent
 BACKGROUND_PATH = ASSET_DIR / 'TUK_GROUND.png'
 SPRITE_PATH = ASSET_DIR / 'animation_sheet.png'
@@ -40,6 +42,8 @@ class Character:
         return ANIMATIONS[(self.state, self.facing)]
 
     def update(self, dt, pressed_keys):
+        if not isfinite(dt) or dt < 0:
+            raise ValueError('경과 시간은 유한한 0 이상의 값이어야 합니다.')
         previous_animation = (self.state, self.facing)
         previous_x, previous_y = self.x, self.y
         horizontal = int(pico2d.SDLK_RIGHT in pressed_keys) - int(pico2d.SDLK_LEFT in pressed_keys)
@@ -65,9 +69,10 @@ class Character:
             self.frame_elapsed = 0.0
             return
         self.frame_elapsed += dt
-        while self.frame_elapsed >= FRAME_INTERVAL:
-            self.frame_elapsed -= FRAME_INTERVAL
-            self.frame_index = (self.frame_index + 1) % len(self.frames)
+        steps = int((self.frame_elapsed + 1e-9) / FRAME_INTERVAL)
+        if steps:
+            self.frame_elapsed = max(0.0, self.frame_elapsed - steps * FRAME_INTERVAL)
+            self.frame_index = (self.frame_index + steps) % len(self.frames)
 
 
 def display_scale():
@@ -89,17 +94,26 @@ def draw_character(sprite, frame, x, y):
 
 
 def handle_events(pressed_keys):
+    """pico2d에서 제공하는 SDL API로 포커스 이벤트까지 함께 처리한다."""
     direction_keys = {pico2d.SDLK_LEFT, pico2d.SDLK_RIGHT,
                       pico2d.SDLK_UP, pico2d.SDLK_DOWN}
-    for event in pico2d.get_events():
+    # pico2d.get_events()는 창 포커스 이벤트를 반환하지 않으므로 직접 폴링한다.
+    event = pico2d.SDL_Event()
+    while pico2d.SDL_PollEvent(byref(event)):
         if event.type == pico2d.SDL_QUIT:
             return False
-        if event.type == pico2d.SDL_KEYDOWN and event.key == pico2d.SDLK_ESCAPE:
-            return False
-        if event.type == pico2d.SDL_KEYDOWN and event.key in direction_keys:
-            pressed_keys.add(event.key)
+        if event.type == pico2d.SDL_WINDOWEVENT:
+            if event.window.event in (pico2d.SDL_WINDOWEVENT_FOCUS_LOST,
+                                      pico2d.SDL_WINDOWEVENT_FOCUS_GAINED):
+                pressed_keys.clear()
+        elif event.type == pico2d.SDL_KEYDOWN:
+            key = event.key.keysym.sym
+            if key == pico2d.SDLK_ESCAPE:
+                return False
+            if key in direction_keys:
+                pressed_keys.add(key)
         elif event.type == pico2d.SDL_KEYUP:
-            pressed_keys.discard(event.key)
+            pressed_keys.discard(event.key.keysym.sym)
     return True
 
 
@@ -112,12 +126,23 @@ def load_asset(path):
         raise RuntimeError(f'이미지 로딩 실패: {path} ({error})') from error
 
 
+def validate_frames(sprite):
+    for (state, facing), frames in ANIMATIONS.items():
+        if not frames:
+            raise ValueError(f'프레임이 없는 동작: {state}/{facing}')
+        for x, y, width, height in frames:
+            if (min(x, y) < 0 or min(width, height) <= 0
+                    or x + width > sprite.w or y + height > sprite.h):
+                raise ValueError(f'스프라이트 범위를 벗어난 프레임: {state}/{facing}')
+
+
 def main():
     """프로그램 실행 진입점."""
     pico2d.open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
     try:
         background = load_asset(BACKGROUND_PATH)
         sprite = load_asset(SPRITE_PATH)
+        validate_frames(sprite)
         character = Character()
         pressed_keys = set()
         previous_time = perf_counter()
@@ -131,7 +156,7 @@ def main():
             draw_character(sprite, character.frames[character.frame_index],
                            character.x, character.y)
             pico2d.update_canvas()
-            pico2d.delay(0.005)
+            pico2d.delay(LOOP_DELAY)
     finally:
         pico2d.close_canvas()
     return 0
