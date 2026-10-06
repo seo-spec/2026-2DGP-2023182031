@@ -1,9 +1,13 @@
 """방향키 입력에 따라 소년 캐릭터를 움직이는 단일 파일 뷰어."""
 
 import pico2d
+from pathlib import Path
 
 CANVAS_WIDTH = 800
 CANVAS_HEIGHT = 600
+ASSET_DIR = Path(__file__).resolve().parent
+BACKGROUND_PATH = ASSET_DIR / 'TUK_GROUND.png'
+SPRITE_PATH = ASSET_DIR / 'animation_sheet.png'
 
 
 def handle_events():
