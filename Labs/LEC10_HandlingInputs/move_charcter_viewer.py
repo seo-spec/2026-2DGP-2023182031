@@ -53,6 +53,9 @@ class Character:
             vertical /= length
         self.x += horizontal * MOVE_SPEED * dt
         self.y += vertical * MOVE_SPEED * dt
+        half_width, half_height = display_half_size()
+        self.x = max(half_width, min(CANVAS_WIDTH - half_width, self.x))
+        self.y = max(half_height, min(CANVAS_HEIGHT - half_height, self.y))
         self.state = 'move' if length else 'idle'
         self.frame_elapsed += dt
         while self.frame_elapsed >= FRAME_INTERVAL:
@@ -64,6 +67,13 @@ def display_scale():
     width = max(frame[2] for frames in ANIMATIONS.values() for frame in frames)
     height = max(frame[3] for frames in ANIMATIONS.values() for frame in frames)
     return min(SPRITE_SCALE, CANVAS_WIDTH / width, CANVAS_HEIGHT / height)
+
+
+def display_half_size():
+    scale = display_scale()
+    width = max(frame[2] for frames in ANIMATIONS.values() for frame in frames)
+    height = max(frame[3] for frames in ANIMATIONS.values() for frame in frames)
+    return width * scale / 2, height * scale / 2
 
 
 def draw_character(sprite, frame, x, y):
