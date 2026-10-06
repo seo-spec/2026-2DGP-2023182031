@@ -38,7 +38,9 @@ class Character:
 
     def update(self, dt, pressed_keys):
         horizontal = int(pico2d.SDLK_RIGHT in pressed_keys) - int(pico2d.SDLK_LEFT in pressed_keys)
+        vertical = int(pico2d.SDLK_UP in pressed_keys) - int(pico2d.SDLK_DOWN in pressed_keys)
         self.x += horizontal * MOVE_SPEED * dt
+        self.y += vertical * MOVE_SPEED * dt
         self.frame_elapsed += dt
         while self.frame_elapsed >= FRAME_INTERVAL:
             self.frame_elapsed -= FRAME_INTERVAL
