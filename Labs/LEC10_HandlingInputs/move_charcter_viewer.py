@@ -30,12 +30,13 @@ ANIMATIONS = {
 class Character:
     x: float = CANVAS_WIDTH / 2
     y: float = CANVAS_HEIGHT / 2
+    state: str = 'idle'
     frame_index: int = 0
     frame_elapsed: float = 0.0
 
     @property
     def frames(self):
-        return ANIMATIONS[('idle', 'right')]
+        return ANIMATIONS[(self.state, 'right')]
 
     def update(self, dt, pressed_keys):
         horizontal = int(pico2d.SDLK_RIGHT in pressed_keys) - int(pico2d.SDLK_LEFT in pressed_keys)
@@ -46,6 +47,7 @@ class Character:
             vertical /= length
         self.x += horizontal * MOVE_SPEED * dt
         self.y += vertical * MOVE_SPEED * dt
+        self.state = 'move' if length else 'idle'
         self.frame_elapsed += dt
         while self.frame_elapsed >= FRAME_INTERVAL:
             self.frame_elapsed -= FRAME_INTERVAL
