@@ -20,6 +20,10 @@ ANIMATIONS = {
 }
 
 
+def draw_character(sprite, frame, x, y):
+    sprite.clip_draw(*frame, x, y)
+
+
 def handle_events():
     for event in pico2d.get_events():
         if event.type == pico2d.SDL_QUIT:
@@ -48,6 +52,8 @@ def main():
             pico2d.clear_canvas()
             background.draw(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2,
                             CANVAS_WIDTH, CANVAS_HEIGHT)
+            draw_character(sprite, ANIMATIONS[('idle', 'right')][0],
+                           CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2)
             pico2d.update_canvas()
             pico2d.delay(0.005)
     finally:
