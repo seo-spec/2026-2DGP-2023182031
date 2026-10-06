@@ -6,6 +6,7 @@ import sys
 
 CANVAS_WIDTH = 800
 CANVAS_HEIGHT = 600
+SPRITE_SCALE = 1.5
 ASSET_DIR = Path(__file__).resolve().parent
 BACKGROUND_PATH = ASSET_DIR / 'TUK_GROUND.png'
 SPRITE_PATH = ASSET_DIR / 'animation_sheet.png'
@@ -13,15 +14,22 @@ SPRITE_PATH = ASSET_DIR / 'animation_sheet.png'
 # 실제 시트: 위에서부터 오른쪽 대기, 왼쪽 대기, 오른쪽 이동, 왼쪽 이동.
 # 각 줄은 100×100 셀 8개이며 좌표는 pico2d의 왼쪽 아래 기준이다.
 ANIMATIONS = {
-    ('idle', 'right'): tuple((i * 100, 300, 100, 100) for i in range(8)),
-    ('idle', 'left'): tuple((i * 100, 200, 100, 100) for i in range(8)),
-    ('move', 'right'): tuple((i * 100, 100, 100, 100) for i in range(8)),
-    ('move', 'left'): tuple((i * 100, 0, 100, 100) for i in range(8)),
+    ('idle', 'right'): tuple((i * 100, 302, 100, 100) for i in range(8)),
+    ('idle', 'left'): tuple((i * 100, 202, 100, 100) for i in range(8)),
+    ('move', 'right'): tuple((i * 100, 102, 100, 100) for i in range(8)),
+    ('move', 'left'): tuple((i * 100, 2, 100, 100) for i in range(8)),
 }
 
 
+def display_scale():
+    width = max(frame[2] for frames in ANIMATIONS.values() for frame in frames)
+    height = max(frame[3] for frames in ANIMATIONS.values() for frame in frames)
+    return min(SPRITE_SCALE, CANVAS_WIDTH / width, CANVAS_HEIGHT / height)
+
+
 def draw_character(sprite, frame, x, y):
-    sprite.clip_draw(*frame, x, y)
+    scale = display_scale()
+    sprite.clip_draw(*frame, x, y, frame[2] * scale, frame[3] * scale)
 
 
 def handle_events():
