@@ -3,10 +3,13 @@
 import pico2d
 from pathlib import Path
 import sys
+from dataclasses import dataclass
+from time import perf_counter
 
 CANVAS_WIDTH = 800
 CANVAS_HEIGHT = 600
 SPRITE_SCALE = 1.5
+FRAME_INTERVAL = 0.1
 ASSET_DIR = Path(__file__).resolve().parent
 BACKGROUND_PATH = ASSET_DIR / 'TUK_GROUND.png'
 SPRITE_PATH = ASSET_DIR / 'animation_sheet.png'
@@ -19,6 +22,24 @@ ANIMATIONS = {
     ('move', 'right'): tuple((i * 100, 102, 100, 100) for i in range(8)),
     ('move', 'left'): tuple((i * 100, 2, 100, 100) for i in range(8)),
 }
+
+
+@dataclass
+class Character:
+    x: float = CANVAS_WIDTH / 2
+    y: float = CANVAS_HEIGHT / 2
+    frame_index: int = 0
+    frame_elapsed: float = 0.0
+
+    @property
+    def frames(self):
+        return ANIMATIONS[('idle', 'right')]
+
+    def update(self, dt):
+        self.frame_elapsed += dt
+        while self.frame_elapsed >= FRAME_INTERVAL:
+            self.frame_elapsed -= FRAME_INTERVAL
+            self.frame_index = (self.frame_index + 1) % len(self.frames)
 
 
 def display_scale():
@@ -56,12 +77,17 @@ def main():
     try:
         background = load_asset(BACKGROUND_PATH)
         sprite = load_asset(SPRITE_PATH)
+        character = Character()
+        previous_time = perf_counter()
         while handle_events():
+            now = perf_counter()
+            character.update(now - previous_time)
+            previous_time = now
             pico2d.clear_canvas()
             background.draw(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2,
                             CANVAS_WIDTH, CANVAS_HEIGHT)
-            draw_character(sprite, ANIMATIONS[('idle', 'right')][0],
-                           CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2)
+            draw_character(sprite, character.frames[character.frame_index],
+                           character.x, character.y)
             pico2d.update_canvas()
             pico2d.delay(0.005)
     finally:
