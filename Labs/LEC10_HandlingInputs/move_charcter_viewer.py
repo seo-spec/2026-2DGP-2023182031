@@ -1,9 +1,19 @@
 """방향키 입력에 따라 소년 캐릭터를 움직이는 단일 파일 뷰어."""
 
+import pico2d
+
+CANVAS_WIDTH = 800
+CANVAS_HEIGHT = 600
+
 
 def main():
     """프로그램 실행 진입점."""
-    pass
+    pico2d.open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
+    try:
+        pico2d.clear_canvas()
+        pico2d.update_canvas()
+    finally:
+        pico2d.close_canvas()
 
 
 if __name__ == '__main__':
